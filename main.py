@@ -49,13 +49,13 @@ class Main(tk.Frame):
         )
         btn_delete.pack(side=tk.LEFT)
 
-        #search not working (on webinar this is by told, but we don't found problem)
+        #search not working 
 
-        #self.search_img = tk.PhotoImage(file='./img/search.png')
-        #btn_search = tk.Button(
-        #    toolbar, bg="#d7d8e0", bd=0, image=self.search_img, command=self.open_search_dialog 
-        #)                                                                                       
-        #btn_search.pack(side=tk.LEFT)       
+        self.search_img = tk.PhotoImage(file='./img/search.png')
+        btn_search = tk.Button(
+            toolbar, bg="#d7d8e0", bd=0, image=self.search_img, command=self.open_search_dialog 
+        )                                                                                       
+        btn_search.pack(side=tk.LEFT)       
 
     #add new
     def open_dialog(self):
@@ -86,16 +86,17 @@ class Main(tk.Frame):
             self.db.conn.commit()
             self.view_records()
 
-    #search (not working and always crash)
-    #def open_search_dialog(self):
-    #    Search()
+    #search 
+    def open_search_dialog(self):
+        Search()
 
-    #def search_records(self, name):
-    #    name = ('%' + name + '%')
-    #    self.db.cursor.execute('SELECT * FROM db WHERE name LIKE ?', name)
-        
-    #    [self.tree.delete(i) for i in self.tree.get_children()]
-    #    [self.tree.insert('', 'end', values=row) for row in self.db.cursor.fetchall()]
+    def search_records(self, name):
+        name = ('%' + name + '%')
+        self.db.cursor.execute('SELECT * FROM db WHERE name LIKE ?', (name,))  # Add a comma after (name,)
+    
+        [self.tree.delete(i) for i in self.tree.get_children()]
+        [self.tree.insert('', 'end', values=row) for row in self.db.cursor.fetchall()]
+
 
 #new window
 class Child(tk.Toplevel):
@@ -165,33 +166,33 @@ class Update(Child):
         self.entry_tel.insert(0, row[2])
         self.entry_email.insert(0, row[3])
 
-#search (crash)
-#class Search(tk.Toplevel):
- #   def __init__(self):
- #       super().__init__()
-  #      self.init_search()
-  #      self.view = app
+#search 
+class Search(tk.Toplevel):
+    def __init__(self):
+        super().__init__()
+        self.init_search()
+        self.view = app
 
-  #  def init_search(self):
-   #     self.title('Поиск контакта')
-   #     self.geometry('300x100')
-   #     self.resizable(False, False)
-#
-    #    label_search = tk.Label(self, text = 'Имя: ')
-    #    label_search.place(x=50, y=20)
+    def init_search(self):
+        self.title('Поиск контакта')
+        self.geometry('300x100')
+        self.resizable(False, False)
 
-    #    self.entry_search = ttk.Entry(self)
-     #   self.entry_search.place(x=100, y=20, width=150)
+        label_search = tk.Label(self, text = 'Имя: ')
+        label_search.place(x=50, y=20)
 
-     #   btn_cancel = ttk.Button(self, text = 'Закрыть', command=self.destroy())
-      #  btn_cancel.place(x=185, y=50)
+        self.entry_search = ttk.Entry(self)
+        self.entry_search.place(x=100, y=20, width=150)
 
-       # btn_search = ttk.Button(self, text = 'Найти')
-      #  btn_search.place(x=105, y=50)
-       # btn_search.bind('<Button-1>', lambda event:
-      #                  self.view.search_records(self.entry_search.get()))
-       # btn_search.bind('<Button-1>', lambda event:
-       #                 self.destroy(), add='+')
+        btn_cancel = ttk.Button(self, text='Закрыть', command=self.destroy)
+        btn_cancel.place(x=185, y=50)
+
+        btn_search = ttk.Button(self, text = 'Найти')
+        btn_search.place(x=105, y=50)
+        btn_search.bind('<Button-1>', lambda event:
+                        self.view.search_records(self.entry_search.get()))
+        btn_search.bind('<Button-1>', lambda event:
+                        self.destroy(), add='+')
 
 #database
 class DB:
